@@ -39,5 +39,20 @@
         case "registra":
             registra($conn);
         break;
+        case "modifica_nazione":
+            modifica_nazione($conn);
+        break;
+        case "modifica_regione":
+            modifica_regione($conn);
+        break;
+        case "modifica_provincia":
+            modifica_provincia($conn);
+        break;
+        case "cronologia_modifiche":
+            cronologia_modifiche($conn);
+        break;
+        case "elimina":
+            elimina($conn);
+        break;
     }
 ?>

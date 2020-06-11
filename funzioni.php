@@ -159,6 +159,60 @@ function registra($conn){
     }
     echo $json_response = json_encode($risposta);
 }
+
+function modifica_nazione($conn){
+    $data = $_GET["data"];
+    $chiave = $_GET["chiave"];
+    $valore = $_GET["valore"];
+    $user=$_GET["user"];
+    $data_attuale=date("y-m-d");
+    $stmt = $conn->query("SELECT $chiave FROM andamento_nazionale WHERE data='$data'");
+    $ris=$stmt->fetchALL(PDO::FETCH_ASSOC);
+    $valore_vecchio=$ris[0]["$chiave"];
+    $stmt = $conn->query("UPDATE andamento_nazionale SET $chiave=$valore WHERE data='$data'");
+    $stmt = $conn->query("INSERT INTO modifiche (data_modifica, data, luogo, chiave, valore_vecchio, valore_nuovo, user_fk)  VALUES ('$data_attuale', '$data', 'Italia', '$chiave', $valore_vecchio, $valore, '$user')");
+}
+function modifica_regione($conn){
+    $reg=fix();
+    $data = $_GET["data"];
+    $chiave = $_GET["chiave"];
+    $valore = $_GET["valore"];
+    $user=$_GET["user"];
+    $data_attuale=date("y-m-d");
+    $stmt = $conn->query("SELECT $chiave FROM andamento_regionale WHERE data='$data' AND denominazione_regione='$reg'");
+    $ris=$stmt->fetchALL(PDO::FETCH_ASSOC);
+    $valore_vecchio=$ris[0]["$chiave"];
+    $stmt = $conn->query("UPDATE andamento_regionale SET $chiave=$valore WHERE data='$data' AND denominazione_regione='$reg'");
+    $stmt = $conn->query("INSERT INTO modifiche (data_modifica, data, luogo, chiave, valore_vecchio, valore_nuovo, user_fk)  VALUES ('$data_attuale', '$data', '$reg', '$chiave', $valore_vecchio, $valore, '$user')");
+}
+function modifica_provincia($conn){
+    $prov=fix_prov();
+    $data = $_GET["data"];
+    $valore = $_GET["valore"];
+    $user=$_GET["user"];
+    $data_attuale=date("y-m-d");
+    $stmt = $conn->query("SELECT totale_casi FROM andamento_provinciale WHERE data='$data' AND denominazione_provincia='$prov'");
+    $ris=$stmt->fetchALL(PDO::FETCH_ASSOC);
+    $valore_vecchio=$ris[0]["totale_casi"];
+    $stmt = $conn->query("UPDATE andamento_provinciale SET totale_casi=$valore WHERE data='$data' AND denominazione_provincia='$prov'");
+    $stmt = $conn->query("INSERT INTO modifiche (data_modifica, data, luogo, chiave, valore_vecchio, valore_nuovo, user_fk)  VALUES ('$data_attuale', '$data', '$prov', 'totale_casi', $valore_vecchio, $valore, '$user')");
+}
+
+function cronologia_modifiche($conn){
+    $stmt = $conn->query("SELECT * FROM modifiche");
+    $rows=$stmt->rowCount();
+    $ris=$stmt->fetchALL(PDO::FETCH_ASSOC);
+    $myarray["rows"]=$rows;
+    for($i=0; $i<$rows; $i++){
+        $myarray[$i]=[$ris[$i]["id"],$ris[$i]["data_modifica"],$ris[$i]["data"],$ris[$i]["luogo"],$ris[$i]["chiave"],$ris[$i]["valore_vecchio"],$ris[$i]["valore_nuovo"],$ris[$i]["user_fk"]];
+    }
+    echo $json_response = json_encode($myarray);
+}
+
+function elimina($conn){
+    $id = $_GET["id"];
+    $stmt = $conn->query("DELETE FROM modifiche WHERE id='$id'");
+}
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 function check_utente($user){
     global $conn;
@@ -178,6 +232,16 @@ function fix(){
     }else{
         $reg=$_GET["reg"];
         return $reg;
+    }
+}
+function fix_prov(){
+    if($_GET["prov"]!="Barletta-Andria-Trani"&&$_GET["prov"]!="Forlì-Cesena"&&$_GET["prov"]!="Verbano-Cusio-Ossola"){
+        $prov=str_replace('-', ' ', $_GET["prov"]);
+        $prov=str_replace("'", "\'", $prov);
+        return $prov;
+    }else{
+        $prov=$_GET["prov"];
+        return $prov;
     }
 }
 ?>
