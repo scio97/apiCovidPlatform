@@ -79,7 +79,7 @@ function grafico_tamponi($conn){
     $ris=$stmt->fetchALL(PDO::FETCH_ASSOC);
     $myarray[$ris[0]["data"]]=$ris[0]["tamponi"];
     for($i=1; $i<count($ris); $i++){
-            $myarray[$ris[$i]["data"]]=$ris[$i]["tamponi"]-$ris[$i-1]["tamponi"];
+            $myarray[$ris[$i]["data"]] = $ris[$i]["tamponi"] - $ris[$i-1]["tamponi"];
     }
     echo $json_response = json_encode($myarray);
 }
