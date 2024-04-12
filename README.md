@@ -8,6 +8,10 @@ Il livello di business logic esegue le elaborazioni necessarie dei dati (preleva
 
 Le API restituiscono un file JSON.
 
+### TECNOLOGIE IMPLEMENTATE
+
+Il progetto è stato sviluppato utilizzando le seguenti tecnologie: PHP
+
 ## INSTALLAZIONE
 
 Per eseguire correttamente il progetto è necessario avere installata sulla macchina una versione recente di PHP, per eseguire il progetto da terminale inserire il codice:
